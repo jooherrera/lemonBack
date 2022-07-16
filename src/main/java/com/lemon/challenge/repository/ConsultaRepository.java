@@ -18,13 +18,16 @@ public class ConsultaRepository {
 
     @Autowired
     public ConsultaRepository(Environment env) throws SQLException {
-        String uri = env.getProperty("sql.uri");
+        String uri = env.getProperty("sql.uri")  ;
         String user = env.getProperty("sql.user");
         String password = env.getProperty("sql.password");
         conectar(uri, user, password);
     }
 
     private void conectar(String uri, String user, String password) throws SQLException {
+        if(uri.equals("") || user.equals("") || password.equals("")){
+            throw new SQLException("No se puede conectar a la base de datos. Faltan credenciales");
+        }
         conn = DriverManager.getConnection(uri, user, password);
     }
 
