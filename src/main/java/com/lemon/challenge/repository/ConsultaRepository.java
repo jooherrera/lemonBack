@@ -14,21 +14,29 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ConsultaRepository {
 
+    private String uri;
+    private String user;
+    private String password;
     private Connection conn;
 
     @Autowired
     public ConsultaRepository(Environment env) throws SQLException {
-        String uri = env.getProperty("sql.uri")  ;
-        String user = env.getProperty("sql.user");
-        String password = env.getProperty("sql.password");
+        uri = env.getProperty("sql.uri");
+        user = env.getProperty("sql.user");
+        password = env.getProperty("sql.password");
         conectar(uri, user, password);
     }
 
     private void conectar(String uri, String user, String password) throws SQLException {
-        if(uri.equals("") || user.equals("") || password.equals("")){
-            throw new SQLException("No se puede conectar a la base de datos. Faltan credenciales");
+        try {
+            if (uri.equals("") || user.equals("") || password.equals("")) {
+                throw new SQLException("No se puede conectar a la base de datos. Faltan credenciales");
+            }
+            conn = DriverManager.getConnection(uri, user, password);
+        } catch (SQLException e) {
+            System.out.println("No se pudo conectar a la base de datos");
         }
-        conn = DriverManager.getConnection(uri, user, password);
+
     }
 
     public ArrayList<ActividadesDto> consultarActividades() throws SQLException {
@@ -62,5 +70,19 @@ public class ConsultaRepository {
         stmt.close();
         return list;
 
+    }
+
+    public void closeConnection() throws SQLException {
+        if (conn != null) {
+            conn.close();
+            conn = null;
+            System.out.println("Conexion cerrada");
+        }
+    }
+
+    public void reconnect() throws SQLException {
+        System.out.println("Intentando crear nueva conexion...");
+        conn = DriverManager.getConnection(uri,user,password);
+        System.out.println("Reconectado exitosamente.");
     }
 }

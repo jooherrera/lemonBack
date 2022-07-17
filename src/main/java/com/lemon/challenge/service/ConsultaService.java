@@ -1,4 +1,3 @@
-
 package com.lemon.challenge.service;
 
 import com.lemon.challenge.dto.ActividadesDto;
@@ -10,13 +9,19 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ConsultaService {
-    
+
     @Autowired
     ConsultaRepository repo;
-    
-    public ArrayList<ActividadesDto> generarConsultaActividades() throws SQLException{
-        return repo.consultarActividades();
+
+    public ArrayList<ActividadesDto> generarConsultaActividades() throws SQLException {
+        try {
+            return repo.consultarActividades();
+        } catch (Exception e) {
+            repo.closeConnection();
+            repo.reconnect();
+            return repo.consultarActividades();
+        }
+
     }
-    
-    
+
 }

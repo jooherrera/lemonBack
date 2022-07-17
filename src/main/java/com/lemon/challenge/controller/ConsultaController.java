@@ -2,6 +2,7 @@
 package com.lemon.challenge.controller;
 
 import com.lemon.challenge.service.ConsultaService;
+import java.sql.SQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +23,8 @@ public class ConsultaController {
     public ResponseEntity<Object> generarConsultaActividades(){
         try {
             return new ResponseEntity<>(service.generarConsultaActividades(),HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Ocurrio un error",HttpStatus.BAD_REQUEST);
+        } catch (SQLException e) {
+            return new ResponseEntity<>("No hay conexion con la base de datos.",HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
